@@ -1048,7 +1048,8 @@ void MainTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+	  mainTask();
+	  osDelay(1);
   }
   /* USER CODE END 5 */
 }
@@ -1066,7 +1067,8 @@ void FTPTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+	  serviceTask();
+	  osDelay(1);
   }
   /* USER CODE END FTPTask */
 }
