@@ -612,7 +612,7 @@ static void MX_RTC_Init(void)
   }
 
   /* USER CODE BEGIN Check_RTC_BKUP */
-
+  return; //não permite reiniciar a data/hora
   /* USER CODE END Check_RTC_BKUP */
 
   /** Initialize RTC and set the Time and Date
