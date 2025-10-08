@@ -22,12 +22,19 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "global.h"
+#include "string.h"
+#include "codigosLogs.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+const char SERVICE_TOKEN[160] = "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MjY3ODc2ODAsImV4cCI6NDg4MjU0NzY4MH0.HAkiJpJuatu9opYnIijl3HBSTZjp9GCYPEYsGmvLF14";
+const char SERVICE_ADDRESS[45] = "http://pivots-907b8.rj.r.appspot.com/";
+const char SERVICE_HOST[32] = "pivots-907b8.rj.r.appspot.com";
+const char ENDPOINT_POST_REPORTE[25] = "api/pivots/report";
+const char ENDPOINT_GET_ACIONAMENTO[25] = "api/pivots/drive/";
+const char ENDPOINT_GET_CONFIG[25] = "api/pivots/config/";
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -64,7 +71,221 @@ DMA_HandleTypeDef hdma_usart6_rx;
 osThreadId mainTaskHandle;
 osThreadId ftpTaskHandle;
 /* USER CODE BEGIN PV */
+RTC_DateTypeDef sDate;
 
+RTC_TimeTypeDef
+	sTime,
+	horarioInicioPonta,
+	horarioFimPonta;
+
+uint8_t
+	flagMenu = false,
+	flagEntraMenu = false,
+	flagOperacao = false,
+	flagBuzzer = false,
+	flagLedCOM = false,
+	flagAtualizaLCD = false,
+	flagReadRTC = false,
+	flagServiceOcupado = false,
+	flagServiceLeituraConfig = false,
+	flagReportaDesligou = false,
+	flagContaHorimetro = false,
+	flagSalvaHorimetro = false,
+	flagVerificaObstaculos = false,
+
+	flagRetornoHome = false,
+	flagRetornoHomeHorarioPonta = false,
+	flagHomeEncontrado = false,
+	flagEmergencia = false,
+	flagFalhaSeguranca = false,
+	flagFaltaFase = false,
+	flagBarricada = false,
+	flagBarricadaGPS = false,
+	flagFalhaPressao = false,
+	flagObstaculoEncontrado = false,
+	flagPortaAberta = false,
+	flagHorarioPonta = false,
+	flagSaiuHorarioPonta = false,
+	flagManualDireita = false,
+	flagManualEsquerda = false,
+	flagAcionamentoPelaEeprom = false,
+	flagBombaBooster = false,
+	flagOverrideBombaBooster = false,
+	flagTrocouLaminaDagua = false,
+	flagSelecaoPivot = false,
+	flagIrrigacaoAguardandoInicio = false,
+	flagIrrigacaoAguardandoPressao = false,
+	flagFertiIrrigacao = false,
+	flagAcionamentoPercentimetro = false,
+	flagAcionamentoBombaPrincipal = false,
+	flagAcionamentoContatoAuxiliar = false,
+
+	flagLeituraGNSS = false,
+	flagLeituraGNSSRecente = false,
+	flagPosicaoInicioOperacaoConfiavel = false,
+	flagPacoteRS485 = false,
+	flagPacoteGNSSRS485 = false,
+	flagPacoteGNSSLoRa = false,
+	flagSucessoLoRa = false,
+
+	flagWiFiDhcp = true,
+
+	flagSalvaOperacao = false,
+
+	flagInfoLCDSeguranca = false,
+	flagInfoLCDPressao = false,
+	flagInfoLCDGNSS = false,
+
+	flagFimCursoDireita = false,
+	flagFimCursoEsquerda = false;
+
+uint8_t
+	modoOperacao = MODO_DESLOCAMENTO,
+	modoOperacaoRemoto = MODO_DESLOCAMENTO,
+	modoOperacaoHorarioPonta = MODO_DESLOCAMENTO,
+	cicloIrrigacao = IRRIGACAO_1_CICLO,
+	sentidoMotor = MOTOR_DESLIGADO,
+	sentidoRemoto = REMOTO_SEM_COMANDO,
+	sentidoHorarioPonta = MOTOR_DESLIGADO,
+	agendaHorarioAcionado = 99,
+	alarmePressao = 0,
+	histereseAlarmePressao = 0,
+	tempoPressurizacao = 5,
+	placaSoquete = SOQUETE_GPRS,
+
+	contadorVerificaSeguranca = TEMPO_VERIFICA_SEGURANCA,
+	contadorReversaoMotor = TEMPO_REVERSAO_MOTOR,
+	contadorPulsoReleOn = TEMPO_PULSO_RELE_ON,
+	contadorErroBG95 = 0,
+	contadorErroGPRS = 0,
+	contadorErroGNSS = 0,
+	contadorTimeoutGNSS = 0,
+	contadorTimeoutGNSSRecente = 0,
+	contadorTimeoutConfiguraGNSS = 0,
+	contadorTimeoutWiFi = 0,
+	contadorTimeoutDadosWiFi = 0,
+	comunicacaoGNSS = GNSS_485,
+	contadorIniciaVerificacaoHorarioPonta = 0,
+	contadorRS485Buffer = 0,
+	contadorLoRaBuffer = 0,
+	contadorAguardaPosicaoObstaculo = 0,
+	pressao = 0,
+
+	timeoutRS485 = TIMEOUT_PADRAO_RS485,
+
+	contadorEntraMenu = 0,
+	contadorReporteService = 0,
+
+	percentualSinalOperadora = 0, //entre 0-99%
+	qualidadeSinalLora = 0, //entre 0-5
+
+	canalLoRa = 0x1F,
+	canalLoRaGateway = 0x10;
+
+char
+	soqueteDataIn = ' ',
+	rs485DataIn = ' ',
+	loraDataIn = ' ',
+
+	operadoraConectada = 'N';
+
+uint16_t
+	senha = 0,
+	tempoPressurizacaoSegundos = 0,
+	contadorSoqueteBuffer = 0,
+	contadorTimeoutBG95 = 0,
+	contadorTimeoutGPRS = 0,
+	contadorTimeoutLoRa = 0,
+	contadorTimeoutLoRaGateway = 0,
+	contadorBombaPrincipal = 0,
+
+	tempoBaseLaminaDagua = 200,
+	tabelaLaminaDagua05 = 7000,
+	tabelaLaminaDagua12 = 5000,
+	tabelaLaminaDagua20 = 4000,
+	tabelaLaminaDagua30 = 3000,
+	tabelaLaminaDagua40 = 2000,
+	tabelaLaminaDagua50 = 1200,
+	tabelaLaminaDagua70 = 500,
+
+	laminaDagua = 100,
+	trocaLaminaDagua = 100,
+	contadorLaminaDagua = 0,
+	contadorLaminaDaguaDesligado = 0,
+	setPointContadorLaminaDagua = 0,
+	setPointContadorLaminaDaguaDesligado = 0,
+
+	enderecoLoRaPivot = 0x0110,
+	enderecoLoRaGNSS = 0x0111,
+
+	enderecoLoRaPivotGateway = 0x0110,
+	enderecoLoRaGateway = 0x0112,
+
+	contadorTempoInfoSinais = 0,
+
+	posicaoMemoriaLog = 0;
+
+uint32_t
+	numeroSerial = 0,
+
+	ultimoIdConfig = 0,
+	ultimoIdAcionamento = 0;
+
+CoordenadasTypeDef
+	posicaoAtualGPS,
+	posicaoInicioOperacao,
+	posicaoHome;
+
+HorimetroTypeDef
+	horimetro;
+
+LogTypeDef
+	logLido;
+
+char
+	mensagemFTPLCD[16],
+
+	bufferEnvioLoRa[TAMANHO_BUFFER_LORA],
+	bufferLoRa[TAMANHO_BUFFER_LORA],
+	bufferRS485[TAMANHO_BUFFER_RS485],
+	bufferSoquete[TAMANHO_BUFFER_SOQUETE],
+	bufferEnvioSoquete[TAMANHO_BUFFER_SOQUETE],
+	reporteService[TAMANHO_MAXIMO_REPORTE],
+
+	enderecoLoRaRecebidoPivot[5],
+	enderecoLoRaRecebidoGNSS[5],
+	canalLoRaRecebido[5],
+
+	wifiSSID[QUANTIDADE_CHAR_WIFI_SSID + 1],
+	wifiSenha[QUANTIDADE_CHAR_WIFI_SENHA + 1],
+
+	gprsAPN[QUANTIDADE_CHAR_GPRS_APN];
+
+uint8_t
+	flagObstaculoAtivado[QUANTIDADE_OBSTACULOS],
+	statusEntradasDigitais[QUANTIDADE_ENTRADAS_DIGITAIS],
+	statusReles[QUANTIDADE_RELES];
+
+uint8_t
+	acionamentoAgenda[QUANTIDADE_AGENDA_ACIONAMENTO],
+	diaDaSemanaAgenda[QUANTIDADE_AGENDA_ACIONAMENTO],
+
+	wifiIpDinamico[4],
+	wifiIp[4],
+	wifiGateway[4],
+	wifiDNS[4],
+	wifiMask[4];
+
+uint16_t
+	valorAdc[2],
+	raioAtuacaoObstaculo[QUANTIDADE_OBSTACULOS];
+
+RTC_TimeTypeDef
+	horarioLigarAgenda[QUANTIDADE_AGENDA_ACIONAMENTO],
+	horarioDesligarAgenda[QUANTIDADE_AGENDA_ACIONAMENTO];
+
+CoordenadasTypeDef
+	posicoesObstaculos[QUANTIDADE_OBSTACULOS];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -90,6 +311,27 @@ void FTPTask(void const * argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
+	if(hadc == &hadc1) {
+		//leituraTransdutorPressao();
+	}
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+
+
+
+}
+
+void delayMicro(uint32_t tempo) {
+	__HAL_TIM_SET_COUNTER(&htim2, 0);
+	while(__HAL_TIM_GET_COUNTER(&htim2) < tempo) {
+	}
+}
+
+void reiniciaWatchDog() {
+	HAL_IWDG_Refresh(&hiwdg);
+}
 
 /* USER CODE END 0 */
 
