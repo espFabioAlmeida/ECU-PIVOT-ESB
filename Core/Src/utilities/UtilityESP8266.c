@@ -330,7 +330,6 @@ void wiFiFixaIp() {
 WIFI LER IP DINÂMICO
 ==============================================================================*/
 void wiFiLerIpDinamico() {
-	char aspas = ASPAS;
 	wifiIpDinamico[0] = 0;
 	wifiIpDinamico[1] = 0;
 	wifiIpDinamico[2] = 0;

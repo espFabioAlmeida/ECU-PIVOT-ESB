@@ -41,7 +41,7 @@ void submenuPlacaSoqueteInternet() {
 			while(botaoOk());
 			flagSubmenu = false;
 			placaSoquete = valor;
-			configuraVelocidadeUART3();
+			configuraVelocidadeUART6();
 			writeEepromPlacaSoquete();
 		}
 	}

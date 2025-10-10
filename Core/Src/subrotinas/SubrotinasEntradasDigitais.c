@@ -37,9 +37,9 @@ void leituraFimCurso() {
 	statusEntradasDigitais[1] = flagFimCursoEsquerda;
 }
 /*=============================================================================
-LEITURA EMERGENCIA E SEGURANCA
+LEITURA SEGURANCA
 ==============================================================================*/
-void leituraEmergencia() {
+void leituraSeguranca() {
 	static uint8_t flagEntradaSeguranca1 = false, flagEntradaSeguranca2 = false;
 
 	if(flagEntradaSeguranca1) {
@@ -155,9 +155,7 @@ LEITURA DAS ENTRADAS DIGITAIS
 ==============================================================================*/
 void entradasDigitais() {
 	leituraFimCurso();
-	leituraEmergencia();
-	leituraPortaGabinete();
-	leituraSelecaoPivot();
+	leituraSeguranca();
 	leituraAcionamentoManual();
 	leituraTrocaModoOperacao();
 }
