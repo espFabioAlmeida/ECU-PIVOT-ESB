@@ -46,13 +46,13 @@ void telaInicial() {
 
 	limpaLcd();
 	lcdPosLc(1, 1);
-	lcdEscreve("Ecu Pivot");
+	lcdEscreve("Ecu Pivot ESB");
 	lcdPosLc(2, 1);
 	lcdEscreve("V");
 	escreveDado(VERSAO_FIRMWARE, 0, 0, 2);
 	lcdEscreve(".");
 	escreveDado(SUBVERSAO_FIRMWARE, 0, 0, 1);
-	lcdEscreve(" MAR/25");
+	lcdEscreve(" NOV/25");
 	HAL_Delay(TEMPO_TELA_INICIAL);
 	flagBuzzer = true;
 	limpaLcd();

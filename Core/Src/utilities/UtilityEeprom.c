@@ -693,13 +693,13 @@ void apagaEeprom() {
 		flagFertiIrrigacao = false;
 		numeroSerial = 0;
 		tempoBaseLaminaDagua = 200;
-		tabelaLaminaDagua05 = 7000;
-		tabelaLaminaDagua12 = 5000;
-		tabelaLaminaDagua20 = 4000;
+		tabelaLaminaDagua05 = 500;
+		tabelaLaminaDagua12 = 1200;
+		tabelaLaminaDagua20 = 2000;
 		tabelaLaminaDagua30 = 3000;
-		tabelaLaminaDagua40 = 2000;
-		tabelaLaminaDagua50 = 1200;
-		tabelaLaminaDagua70 = 500;
+		tabelaLaminaDagua40 = 4000;
+		tabelaLaminaDagua50 = 5000;
+		tabelaLaminaDagua70 = 7000;
 
 		ultimoIdAcionamento = 0;
 		ultimoIdConfig = 0;

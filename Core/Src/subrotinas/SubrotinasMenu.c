@@ -179,7 +179,7 @@ void menuPrincipal() {
 					case 14: submenuConfiguracoesLoRaGateway(); break;
 					case 15: submenuConfiguracoesLoRa(); break;
 					case 16: submenuComunicacaoGNSS(); break;
-					case 17: submenuTabelaPercentimetro(); break; //somente apresentação (Horimetro)
+					case 17: break; //somente apresentação (Horimetro)
 					case 18: submenuZerarHorimetro(); break;
 					case 19: submenuTabelaPercentimetro(); break;
 					case 20: submenuTempoBasePercentimetro(); break;
