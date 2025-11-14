@@ -18,7 +18,7 @@ CONSTANTES DO ARQUIVO
 CONFIGURA VELOCIDADE UART6
 ==============================================================================*/
 void configuraVelocidadeUART6() {
-	HAL_UART_Transmit(&huart1, "Configurando UART Soquete\r\n", 27, 200);
+	HAL_UART_Transmit(&huart3, "Configurando UART Soquete\r\n", 27, 200);
 
 	if(placaSoquete == SOQUETE_RADIO) {
 		on(SOQUETE_OUT1_GPIO_Port, SOQUETE_OUT1_Pin);
