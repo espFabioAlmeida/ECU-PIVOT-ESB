@@ -21,7 +21,7 @@ void leituraTransdutorPressao() {
 	for(uint8_t i = 0; i < 3; i ++) {
 		bufferPressao[i] = bufferPressao[i + 1];
 	}
-	bufferPressao[3] = valorAdc[0];
+	bufferPressao[3] = valorAdc[1];
 
 	for(uint8_t i = 0; i < 4; i ++) {
 		calculo += bufferPressao[i];
