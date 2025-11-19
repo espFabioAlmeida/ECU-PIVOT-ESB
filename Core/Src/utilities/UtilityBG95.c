@@ -54,7 +54,7 @@ uint8_t aguardaBG95(uint16_t tempo, uint8_t preservaBuffer) {
 			}
 		}
 	}
-	HAL_UART_Transmit(&huart6, bufferSoquete, strlen(bufferSoquete), 200);
+	HAL_UART_Transmit(&huart3, bufferSoquete, strlen(bufferSoquete), 200);
 
 	if(preservaBuffer == false) {
 		apagaSoqueteBuffer();
@@ -107,7 +107,7 @@ uint8_t aguardaConnectBG95(uint16_t tempo, uint8_t preservaBuffer) {
 			}
 		}
 	}
-	HAL_UART_Transmit(&huart6, bufferSoquete, strlen(bufferSoquete), 200);
+	HAL_UART_Transmit(&huart3, bufferSoquete, strlen(bufferSoquete), 200);
 
 	if(preservaBuffer == false) {
 		apagaSoqueteBuffer();
@@ -177,7 +177,7 @@ uint8_t aguardaPostBG95(uint16_t tempo, uint8_t preservaBuffer) {
 			}
 		}
 	}
-	HAL_UART_Transmit(&huart6, bufferSoquete, strlen(bufferSoquete), 200);
+	HAL_UART_Transmit(&huart3, bufferSoquete, strlen(bufferSoquete), 200);
 
 	if(preservaBuffer == false) {
 		apagaSoqueteBuffer();
@@ -248,7 +248,7 @@ uint8_t aguardaGetBG95(uint16_t tempo, uint8_t preservaBuffer) {
 			}
 		}
 	}
-	HAL_UART_Transmit(&huart6, bufferSoquete, strlen(bufferSoquete), 200);
+	HAL_UART_Transmit(&huart3, bufferSoquete, strlen(bufferSoquete), 200);
 
 	if(preservaBuffer == false) {
 		apagaSoqueteBuffer();
@@ -292,7 +292,7 @@ uint8_t aguardaReadBG95(uint16_t tempo, uint8_t preservaBuffer) {
 			}
 		}
 	}
-	HAL_UART_Transmit(&huart6, bufferSoquete, strlen(bufferSoquete), 200);
+	HAL_UART_Transmit(&huart3, bufferSoquete, strlen(bufferSoquete), 200);
 
 	if(preservaBuffer == false) {
 		apagaSoqueteBuffer();
@@ -306,7 +306,7 @@ ACIONA 4G
 void aciona4G() {
 	limpaBufferEnvioSoquete();
 	strcat(bufferEnvioSoquete, "AT+QHTTPCFG=\"contextid\",1\r\n");
-	HAL_UART_Transmit(&huart3, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
 	aguardaBG95(TIMEOUT_BG95, false);
 	escreveStringService("Ligando 4G 20%");
 
@@ -314,17 +314,17 @@ void aciona4G() {
 	strcat(bufferEnvioSoquete, "AT+QICSGP=1,1,\"");
 	strcat(bufferEnvioSoquete, gprsAPN);
 	strcat(bufferEnvioSoquete, "\",\"\",\"\",1\r\n");
-	HAL_UART_Transmit(&huart3, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
 	aguardaBG95(TIMEOUT_BG95, false);
 	escreveStringService("Ligando 4G 20%");
 
-	HAL_UART_Transmit(&huart3, "AT+QIACT=1\r\n", 12, 100);
+	HAL_UART_Transmit(&huart6, "AT+QIACT=1\r\n", 12, 100);
 	if(aguardaBG95(TIMEOUT_EXTENDIDO_BG95, false)) {
 		operadoraConectada = 'C';
 		escreveStringService("Ligando 4G 90%");
 	}
 	else {
-		HAL_UART_Transmit(&huart3, "AT+QIACT?\r\n", 11, 100);
+		HAL_UART_Transmit(&huart6, "AT+QIACT?\r\n", 11, 100);
 		aguardaBG95(TIMEOUT_BG95, true);
 		signed int offset = indexOf(bufferSoquete, "+QIACT");
 
@@ -358,12 +358,12 @@ void aciona4G() {
 				char ipChar[4];
 				memset(ipChar, 0x00, 4);
 				sprintf(ipChar, "%d", ip4G[octeto]);
-				HAL_UART_Transmit(&huart6, &ipChar, strlen(ipChar), 100);
+				HAL_UART_Transmit(&huart3, &ipChar, strlen(ipChar), 100);
 				if(octeto < 3) {
-					HAL_UART_Transmit(&huart6, ".", 1, 100);
+					HAL_UART_Transmit(&huart3, ".", 1, 100);
 				}
 				else {
-					HAL_UART_Transmit(&huart6, "\r\n", 2, 100);
+					HAL_UART_Transmit(&huart3, "\r\n", 2, 100);
 				}
 			}
 
@@ -396,13 +396,13 @@ uint8_t reporte4G() {
 
 	limpaBufferEnvioSoquete();
 	strcat(bufferEnvioSoquete, "AT+QHTTPCFG=\"contenttype\",4\r\n");
-	HAL_UART_Transmit(&huart3, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
 	aguardaBG95(TIMEOUT_BG95, false);
 	escreveStringService("Reportando 15%");
 
 	limpaBufferEnvioSoquete();
 	strcat(bufferEnvioSoquete, "AT+QHTTPCFG=\"contextid\",1\r\n");
-	HAL_UART_Transmit(&huart3, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
 	aguardaBG95(TIMEOUT_BG95, false);
 	escreveStringService("Reportando 30%");
 
@@ -410,7 +410,7 @@ uint8_t reporte4G() {
 	strcat(bufferEnvioSoquete, "AT+QHTTPCFG=\"custom_header\",\"");
 	strcat(bufferEnvioSoquete, SERVICE_TOKEN);
 	strcat(bufferEnvioSoquete, "\"\r\n");
-	HAL_UART_Transmit(&huart3, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
 	aguardaBG95(TIMEOUT_BG95, false);
 	escreveStringService("Reportando 45%");
 
@@ -418,21 +418,21 @@ uint8_t reporte4G() {
 	strcat(bufferEnvioSoquete, "AT+QHTTPURL=");
 	sprintfSoquete(strlen(address), 0);
 	strcat(bufferEnvioSoquete, ",60\r\n");
-	HAL_UART_Transmit(&huart3, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
 
 	if(aguardaConnectBG95(TIMEOUT_BG95, false)) {
 		escreveStringService("Reportando 55%");
-		HAL_UART_Transmit(&huart3, &address, strlen(address), 200);
+		HAL_UART_Transmit(&huart6, &address, strlen(address), 200);
 		if(aguardaConnectBG95(TIMEOUT_CONEXAO_BG95, false)) {
 			escreveStringService("Reportando 65%");
 			limpaBufferEnvioSoquete();
 			strcat(bufferEnvioSoquete, "AT+QHTTPPOST=");
 			sprintfSoquete(strlen(reporteService), 0);
 			strcat(bufferEnvioSoquete, ",60\r\n");
-			HAL_UART_Transmit(&huart3, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+			HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
 			if(aguardaConnectBG95(TIMEOUT_CONEXAO_BG95, false)) {
 				escreveStringService("Reportando 80%");
-				HAL_UART_Transmit(&huart3, &reporteService, strlen(reporteService), 500);
+				HAL_UART_Transmit(&huart6, &reporteService, strlen(reporteService), 500);
 				if(aguardaPostBG95(TIMEOUT_CONEXAO_BG95, false)) {
 					escreveStringService("Reporte OK");
 					return true;
@@ -465,7 +465,7 @@ void leituraConfig4G() {
 
 	limpaBufferEnvioSoquete();
 	strcat(bufferEnvioSoquete, "AT+QHTTPCFG=\"contextid\",1\r\n");
-	HAL_UART_Transmit(&huart3, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
 	aguardaBG95(TIMEOUT_BG95, false);
 	escreveStringService("Verf. Config 20%");
 
@@ -473,7 +473,7 @@ void leituraConfig4G() {
 	strcat(bufferEnvioSoquete, "AT+QHTTPCFG=\"custom_header\",\"");
 	strcat(bufferEnvioSoquete, SERVICE_TOKEN);
 	strcat(bufferEnvioSoquete, "\"\r\n");
-	HAL_UART_Transmit(&huart3, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
 	aguardaBG95(TIMEOUT_BG95, false);
 	escreveStringService("Verf. Config 40%");
 
@@ -481,23 +481,23 @@ void leituraConfig4G() {
 	strcat(bufferEnvioSoquete, "AT+QHTTPURL=");
 	sprintfSoquete(strlen(address), 0);
 	strcat(bufferEnvioSoquete, ",60\r\n");
-	HAL_UART_Transmit(&huart3, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
 
 	if(aguardaConnectBG95(TIMEOUT_BG95, false)) {
 		escreveStringService("Verf. Config 60%");
-		HAL_UART_Transmit(&huart3, &address, strlen(address), 200);
+		HAL_UART_Transmit(&huart6, &address, strlen(address), 200);
 		if(aguardaConnectBG95(TIMEOUT_CONEXAO_BG95, false)) {
 			escreveStringService("Verf. Config 70%");
 			limpaBufferEnvioSoquete();
 			strcat(bufferEnvioSoquete, "AT+QHTTPGET=60\r\n");
-			HAL_UART_Transmit(&huart3, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+			HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
 			if(aguardaBG95(TIMEOUT_CONEXAO_BG95, false)) {
 				escreveStringService("Verf. Config 80%");
 				if(aguardaGetBG95(TIMEOUT_CONEXAO_BG95, true)) {
 					escreveStringService("Verf. Config 90%");
 					limpaBufferEnvioSoquete();
 					strcat(bufferEnvioSoquete, "AT+QHTTPREAD=80\r\n");
-					HAL_UART_Transmit(&huart3, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+					HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
 					if(aguardaReadBG95(TIMEOUT_DUPLO_BG95, true)) {
 						escreveStringService("Config. OK");
 						leituraConfiguracaoService();
@@ -523,7 +523,7 @@ void leituraAcionamento4G() {
 
 	limpaBufferEnvioSoquete();
 	strcat(bufferEnvioSoquete, "AT+QHTTPCFG=\"contextid\",1\r\n");
-	HAL_UART_Transmit(&huart3, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
 	aguardaBG95(TIMEOUT_BG95, false);
 	escreveStringService("Verf. Acion. 20%");
 
@@ -531,7 +531,7 @@ void leituraAcionamento4G() {
 	strcat(bufferEnvioSoquete, "AT+QHTTPCFG=\"custom_header\",\"");
 	strcat(bufferEnvioSoquete, SERVICE_TOKEN);
 	strcat(bufferEnvioSoquete, "\"\r\n");
-	HAL_UART_Transmit(&huart3, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
 	aguardaBG95(TIMEOUT_BG95, false);
 	escreveStringService("Verf. Acion. 40%");
 
@@ -539,23 +539,23 @@ void leituraAcionamento4G() {
 	strcat(bufferEnvioSoquete, "AT+QHTTPURL=");
 	sprintfSoquete(strlen(address), 0);
 	strcat(bufferEnvioSoquete, ",60\r\n");
-	HAL_UART_Transmit(&huart3, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
 
 	if(aguardaConnectBG95(TIMEOUT_BG95, false)) {
 		escreveStringService("Verf. Acion. 60%");
-		HAL_UART_Transmit(&huart3, &address, strlen(address), 200);
+		HAL_UART_Transmit(&huart6, &address, strlen(address), 200);
 		if(aguardaConnectBG95(TIMEOUT_CONEXAO_BG95, false)) {
 			escreveStringService("Verf. Acion. 70%");
 			limpaBufferEnvioSoquete();
 			strcat(bufferEnvioSoquete, "AT+QHTTPGET=60\r\n");
-			HAL_UART_Transmit(&huart3, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+			HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
 			if(aguardaBG95(TIMEOUT_CONEXAO_BG95, false)) {
 				escreveStringService("Verf. Acion. 80%");
 				if(aguardaGetBG95(TIMEOUT_CONEXAO_BG95, true)) {
 					escreveStringService("Verf. Acion. 90%");
 					limpaBufferEnvioSoquete();
 					strcat(bufferEnvioSoquete, "AT+QHTTPREAD=80\r\n");
-					HAL_UART_Transmit(&huart3, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+					HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
 					if(aguardaReadBG95(TIMEOUT_DUPLO_BG95, true)) {
 						escreveStringService("Acion. OK");
 						leituraAcionamentoService();
@@ -572,12 +572,12 @@ void verificaQualidadeSinalBG95() {
 	signed int offset = 0;
 	limpaBufferEnvioSoquete();
 	strcat(bufferEnvioSoquete, "AT+QINISTAT\r\n");
-	HAL_UART_Transmit(&huart3, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
 	aguardaBG95(TIMEOUT_BG95, false);
 
 	limpaBufferEnvioSoquete();
 	strcat(bufferEnvioSoquete, "AT+CSQ\r\n");
-	HAL_UART_Transmit(&huart3, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
 	aguardaBG95(TIMEOUT_BG95, true);
 
 	offset = indexOf(bufferSoquete, "+CSQ:");

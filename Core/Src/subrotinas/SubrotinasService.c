@@ -491,7 +491,7 @@ void leituraConfiguracaoService() {
 			i = QUANTIDADE_OBSTACULOS;
 		}
 	}
-	ponteiro ++;
+	//ponteiro ++;
 
 	for(uint8_t i = 0; i < QUANTIDADE_OBSTACULOS; i ++) {
 		flagObstaculoAtivado[i] = charToBool(bufferSoquete[ponteiro]);
