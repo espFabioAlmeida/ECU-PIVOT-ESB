@@ -519,6 +519,23 @@ void telaAjusteTempoPressurizacao() {
 	lcdCursor(1);
 }
 /*=============================================================================
+TELA TIPO SENSOR PRESSAO
+==============================================================================*/
+void telaAjusteTipoSensorPressao(uint8_t tipo) {
+	limpaLcd();
+	lcdPosLc(1, 1);
+	lcdEscreve("Sensor Pressao");
+	lcdPosLc(2, 1);
+	if(tipo == SENSOR_10BAR) {
+		lcdEscreve("0-10 bar");
+	}
+	else {
+		lcdEscreve("0-16 bar");
+	}
+
+	lcdCursor(1);
+}
+/*=============================================================================
 TELA SELECAO OBSTACULOS
 ==============================================================================*/
 void telaSelecaoObstaculos(uint8_t obstaculo, uint8_t ativado) {
@@ -1238,24 +1255,30 @@ void telaMenu(uint8_t menu) {
 			break;
 
 		case 22:
+			lcdEscreve(": Modelo do");
+			lcdPosLc(2, 1);
+			lcdEscreve("Sensor Pressao");
+			break;
+
+		case 23:
 			lcdEscreve(": Troca a");
 			lcdPosLc(2, 1);
 			lcdEscreve("Senha");
 			break;
 
-		case 23:
+		case 24:
 			lcdEscreve(": Log do");
 			lcdPosLc(2, 1);
 			lcdEscreve("Sistema");
 			break;
 
-		case 24:
+		case 25:
 			lcdEscreve(": Carrega os");
 			lcdPosLc(2, 1);
 			lcdEscreve("Param. Fabrica");
 			break;
 
-		case 25:
+		case 26:
 			lcdEscreve(": Troca o");
 			lcdPosLc(2, 1);
 			lcdEscreve("Numero Serial");

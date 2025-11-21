@@ -152,6 +152,12 @@ void writeEepromAlarmePressao() {
 	writeExternalEeprom(0, 17, histereseAlarmePressao);
 }
 /*==============================================================================
+SALVA TIPO SENSOR PRESSAO
+==============================================================================*/
+void writeEepromTipoSensorPressao() {
+	writeExternalEeprom(0, 50, tipoSensorPressao);
+}
+/*==============================================================================
 SALVA TEMPO PRESSURIZACAOa
 ==============================================================================*/
 void writeEepromTempoPressurizacao() {
@@ -459,6 +465,7 @@ void writeAllEeprom() {
 	writeEepromCicloIrrigacao();
 	writeEepromFertiIrrigacao();
 	writeEepromAlarmePressao();
+	writeEepromTipoSensorPressao();
 	writeEepromTempoPressurizacao();
 	writeEepromNumeroSerial();
 	for(uint8_t i = 0; i < QUANTIDADE_OBSTACULOS; i ++) {
@@ -559,7 +566,7 @@ void readEeprom() {
 
 		flagWiFiDhcp = readExternalEeprom(0, 49);
 
-		//50 - Livre
+		tipoSensorPressao = readExternalEeprom(0, 50);
 
 		numeroSerial = make32(readExternalEeprom(0, 51), readExternalEeprom(0, 52),
 				readExternalEeprom(0, 53), readExternalEeprom(0, 54));
@@ -685,6 +692,7 @@ void apagaEeprom() {
 		alarmePressao = 80;
 		histereseAlarmePressao = 10;
 		tempoPressurizacao = 1;
+		tipoSensorPressao = SENSOR_10BAR,
 		cicloIrrigacao = IRRIGACAO_1_CICLO;
 		modoOperacao = MODO_DESLOCAMENTO;
 		sentidoMotor = MOTOR_DESLIGADO;

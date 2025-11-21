@@ -113,6 +113,11 @@ enum PLACA_SOQUETE {
 	SOQUETE_RADIO
 };
 
+enum TIPO_SENSOR_PRESSAO {
+	SENSOR_10BAR,
+	SENSOR_16BAR
+};
+
 typedef struct {
 	uint8_t modoOperacao;
 	uint8_t sentidoOperacao;
@@ -239,6 +244,7 @@ extern uint8_t
 	agendaHorarioAcionado,
 	alarmePressao,
 	histereseAlarmePressao,
+	tipoSensorPressao,
 	tempoPressurizacao,
 	placaSoquete,
 

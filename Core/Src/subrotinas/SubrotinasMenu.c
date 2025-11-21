@@ -9,7 +9,7 @@
 /*=============================================================================
 CONSTANATES DO ARQUIVO
 ==============================================================================*/
-#define QUANTIDADE_MENU 25
+#define QUANTIDADE_MENU 26
 /*=============================================================================
 SUBMENU SENHA
 ==============================================================================*/
@@ -184,10 +184,11 @@ void menuPrincipal() {
 					case 19: submenuTabelaPercentimetro(); break;
 					case 20: submenuTempoBasePercentimetro(); break;
 					case 21: submenuPlacaSoqueteInternet(); break;
-					case 22: submenuTrocaSenha(); break;
-					case 23: submenuSelecionaLog(); break;
-					case 24: submenuCarregaParametrosFabrica(); break;
-					case 25: submenuTrocaNumeroSerial(); break;
+					case 22: submenuTipoSensorPressao(); break;
+					case 23: submenuTrocaSenha(); break;
+					case 24: submenuSelecionaLog(); break;
+					case 25: submenuCarregaParametrosFabrica(); break;
+					case 26: submenuTrocaNumeroSerial(); break;
 				}
 				telaMenu(menu);
 			}

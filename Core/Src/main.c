@@ -152,6 +152,7 @@ uint8_t
 	agendaHorarioAcionado = 99,
 	alarmePressao = 0,
 	histereseAlarmePressao = 0,
+	tipoSensorPressao = SENSOR_10BAR,
 	tempoPressurizacao = 5,
 	placaSoquete = SOQUETE_GPRS,
 
