@@ -90,7 +90,7 @@ uint8_t configuraLoRa() {
 		bufferEnvioLoRa[3] = 0x1A; //8N1, 9600bps, 2.4k
 		bufferEnvioLoRa[4] = canalLoRa;
 		bufferEnvioLoRa[5] = 0xC4; //opções
-		HAL_UART_Transmit(&huart8, &bufferEnvioLoRa, 6, 100);
+		HAL_UART_Transmit(&huart8, &bufferEnvioLoRa, 6, 300);
 		aguardaLoRa(20);
 
 		for(uint8_t i = 0; i < TAMANHO_BUFFER_LORA; i ++) {
