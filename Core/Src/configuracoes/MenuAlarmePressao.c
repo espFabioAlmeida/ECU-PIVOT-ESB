@@ -110,9 +110,18 @@ void submenuAjusteAlarmePressao() {
 			while(botaoOk());
 			flagSubmenu = false;
 			alarmePressao = cent * 100 + deze * 10 + unid;
-			if(alarmePressao > MAXIMO_PRESSAO * 10) {
-				alarmePressao = MAXIMO_PRESSAO * 10;
+
+			if(tipoSensorPressao == SENSOR_10BAR) {
+				if(alarmePressao > 100) {
+					alarmePressao = 100;
+				}
 			}
+			if(tipoSensorPressao == SENSOR_16BAR) {
+				if(alarmePressao > 160) {
+					alarmePressao = 160;
+				}
+			}
+
 			histereseAlarmePressao = dezeHisterese * 10 + unidHisterese;
 
 			writeEepromAlarmePressao();

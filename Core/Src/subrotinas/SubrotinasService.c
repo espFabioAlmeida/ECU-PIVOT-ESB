@@ -752,9 +752,17 @@ void leituraConfiguracaoService() {
 		laminaDagua = VALOR_MAXIMO_LAMINA_MM;
 	}
 
-	if(alarmePressao > MAXIMO_PRESSAO * 10) {
-		alarmePressao = MAXIMO_PRESSAO * 10;
+	if(tipoSensorPressao == SENSOR_10BAR) {
+		if(alarmePressao > 100) {
+			alarmePressao = 100;
+		}
 	}
+	if(tipoSensorPressao == SENSOR_16BAR) {
+		if(alarmePressao > 160) {
+			alarmePressao = 160;
+		}
+	}
+
 	if(histereseAlarmePressao > 59) {
 		histereseAlarmePressao = 59;
 	}

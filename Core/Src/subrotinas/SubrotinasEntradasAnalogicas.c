@@ -17,6 +17,11 @@ LEITURA TRANSDUTOR DE PRESSAO
 void leituraTransdutorPressao() {
 	static uint16_t bufferPressao[4];
 	uint32_t calculo = 0;
+	uint16_t valorMaximoPressao = 100;
+
+	if(tipoSensorPressao == SENSOR_16BAR) {
+		valorMaximoPressao = 160;
+	}
 
 	for(uint8_t i = 0; i < 3; i ++) {
 		bufferPressao[i] = bufferPressao[i + 1];
@@ -34,7 +39,7 @@ void leituraTransdutorPressao() {
 	}
 
 	calculo -= ADC_MIN_PRESSAO;
-	calculo *= (MAXIMO_PRESSAO * 10);
+	calculo *= valorMaximoPressao;
 	calculo /= GAP_ADC_PRESSAO;
 
 	pressao = calculo;
