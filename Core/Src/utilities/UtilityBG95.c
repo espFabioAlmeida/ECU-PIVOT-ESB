@@ -414,11 +414,75 @@ uint8_t reporte4G() {
 	aguardaBG95(TIMEOUT_BG95, false);
 	escreveStringService("Reportando 45%");
 
+	/* --Tentativa de colocar https no bg95, sem sucesso por enquanto
+	limpaBufferEnvioSoquete();
+	strcat(bufferEnvioSoquete, "AT+QHTTPCFG=\"sslctxid\",1\r\n");
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	aguardaBG95(TIMEOUT_BG95, false);
+	escreveStringService("Reportando 45%");
+
+	limpaBufferEnvioSoquete();
+	strcat(bufferEnvioSoquete, "AT+QSSLCFG=\"sslversion\",1,1\r\n");
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	aguardaBG95(TIMEOUT_BG95, false);
+	escreveStringService("Reportando 45%");
+
+	limpaBufferEnvioSoquete();
+	strcat(bufferEnvioSoquete, "AT+QSSLCFG=\"ciphersuite\",1,0xFFFF\r\n");
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	aguardaBG95(TIMEOUT_BG95, false);
+	escreveStringService("Reportando 45%");
+
+	limpaBufferEnvioSoquete();
+	strcat(bufferEnvioSoquete, "AT+QSSLCFG=\"seclevel\",1,2\r\n");
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	aguardaBG95(TIMEOUT_BG95, false);
+	escreveStringService("Reportando 45%");
+
+	limpaBufferEnvioSoquete();
+	strcat(bufferEnvioSoquete, "AT+QFUPL=\"cacert.pem\"\r\n");
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	aguardaBG95(TIMEOUT_BG95, false);
+	escreveStringService("Reportando 45%");
+
+	limpaBufferEnvioSoquete();
+	strcat(bufferEnvioSoquete, "AT+QFUPL=\"clientcert.pem\"\r\n");
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	aguardaBG95(TIMEOUT_BG95, false);
+	escreveStringService("Reportando 45%");
+
+	limpaBufferEnvioSoquete();
+	strcat(bufferEnvioSoquete, "AT+QFUPL=\"clientkey.pem\"\r\n");
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	aguardaBG95(TIMEOUT_BG95, false);
+	escreveStringService("Reportando 45%");
+
+	limpaBufferEnvioSoquete();
+	strcat(bufferEnvioSoquete, "AT+QSSLCFG=\"cacert\",1,\"cacert.pem\"\r\n");
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	aguardaBG95(TIMEOUT_BG95, false);
+	escreveStringService("Reportando 45%");
+
+	limpaBufferEnvioSoquete();
+	strcat(bufferEnvioSoquete, "AT+QSSLCFG=\"clientcert\",1,\"clientcert.pem\"\r\n");
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	aguardaBG95(TIMEOUT_BG95, false);
+	escreveStringService("Reportando 45%");
+
+	limpaBufferEnvioSoquete();
+	strcat(bufferEnvioSoquete, "AT+QSSLCFG=\"clientkey\",1,\"clientkey.pem\"\r\n");
+	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	aguardaBG95(TIMEOUT_BG95, false);
+	escreveStringService("Reportando 45%");
+	*/
+
 	limpaBufferEnvioSoquete();
 	strcat(bufferEnvioSoquete, "AT+QHTTPURL=");
 	sprintfSoquete(strlen(address), 0);
 	strcat(bufferEnvioSoquete, ",60\r\n");
 	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 200);
+	//HAL_UART_Transmit(&huart3, &address, strlen(address), 200);
+	//HAL_UART_Transmit(&huart3, "\r\n", 2, 200);
 
 	if(aguardaConnectBG95(TIMEOUT_BG95, false)) {
 		escreveStringService("Reportando 55%");

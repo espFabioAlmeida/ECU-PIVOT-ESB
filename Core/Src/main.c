@@ -31,7 +31,9 @@
 /* USER CODE BEGIN PTD */
 const char SERVICE_TOKEN[160] = "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MjY3ODc2ODAsImV4cCI6NDg4MjU0NzY4MH0.HAkiJpJuatu9opYnIijl3HBSTZjp9GCYPEYsGmvLF14";
 const char SERVICE_ADDRESS[45] = "http://pivots-907b8.rj.r.appspot.com/";
+//const char SERVICE_ADDRESS[45] = "https://api-app-pivots.onrender.com/";
 const char SERVICE_HOST[32] = "pivots-907b8.rj.r.appspot.com";
+//const char SERVICE_HOST[32] = "api-app-pivots.onrender.com";
 const char ENDPOINT_POST_REPORTE[25] = "api/pivots/report";
 const char ENDPOINT_GET_ACIONAMENTO[25] = "api/pivots/drive/";
 const char ENDPOINT_GET_CONFIG[25] = "api/pivots/config/";
@@ -552,9 +554,7 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSI
-                              |RCC_OSCILLATORTYPE_LSE;
-  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.LSIState = RCC_LSI_ON;
@@ -1080,8 +1080,8 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOE_CLK_ENABLE();
-  __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
