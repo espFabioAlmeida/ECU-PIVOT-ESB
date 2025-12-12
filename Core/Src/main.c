@@ -18,15 +18,25 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "cmsis_os.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "global.h"
+#include "string.h"
+#include "codigosLogs.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+const char SERVICE_TOKEN[160] = "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MjY3ODc2ODAsImV4cCI6NDg4MjU0NzY4MH0.HAkiJpJuatu9opYnIijl3HBSTZjp9GCYPEYsGmvLF14";
+const char SERVICE_ADDRESS[45] = "http://pivots-907b8.rj.r.appspot.com/";
+//const char SERVICE_ADDRESS[45] = "https://api-app-pivots.onrender.com/";
+const char SERVICE_HOST[32] = "pivots-907b8.rj.r.appspot.com";
+//const char SERVICE_HOST[32] = "api-app-pivots.onrender.com";
+const char ENDPOINT_POST_REPORTE[25] = "api/pivots/report";
+const char ENDPOINT_GET_ACIONAMENTO[25] = "api/pivots/drive/";
+const char ENDPOINT_GET_CONFIG[25] = "api/pivots/config/";
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -45,6 +55,8 @@ DMA_HandleTypeDef hdma_adc1;
 
 I2C_HandleTypeDef hi2c1;
 
+IWDG_HandleTypeDef hiwdg;
+
 RTC_HandleTypeDef hrtc;
 
 TIM_HandleTypeDef htim2;
@@ -60,8 +72,225 @@ DMA_HandleTypeDef hdma_uart8_rx;
 DMA_HandleTypeDef hdma_usart1_rx;
 DMA_HandleTypeDef hdma_usart6_rx;
 
+osThreadId mainTaskHandle;
+osThreadId ftpTaskHandle;
 /* USER CODE BEGIN PV */
+RTC_DateTypeDef sDate;
 
+RTC_TimeTypeDef
+	sTime,
+	horarioInicioPonta,
+	horarioFimPonta;
+
+uint8_t
+	flagMenu = false,
+	flagEntraMenu = false,
+	flagOperacao = false,
+	flagBuzzer = false,
+	flagLedCOM = false,
+	flagAtualizaLCD = false,
+	flagReadRTC = false,
+	flagServiceOcupado = false,
+	flagServiceLeituraConfig = false,
+	flagReportaDesligou = false,
+	flagContaHorimetro = false,
+	flagSalvaHorimetro = false,
+	flagVerificaObstaculos = false,
+
+	flagRetornoHome = false,
+	flagRetornoHomeHorarioPonta = false,
+	flagHomeEncontrado = false,
+	flagEmergencia = false,
+	flagFalhaSeguranca = false,
+	flagFaltaFase = false,
+	flagBarricada = false,
+	flagBarricadaGPS = false,
+	flagFalhaPressao = false,
+	flagObstaculoEncontrado = false,
+	flagPortaAberta = false,
+	flagHorarioPonta = false,
+	flagSaiuHorarioPonta = false,
+	flagManualDireita = false,
+	flagManualEsquerda = false,
+	flagAcionamentoPelaEeprom = false,
+	flagBombaBooster = false,
+	flagOverrideBombaBooster = false,
+	flagTrocouLaminaDagua = false,
+	flagSelecaoPivot = false,
+	flagIrrigacaoAguardandoInicio = false,
+	flagIrrigacaoAguardandoPressao = false,
+	flagFertiIrrigacao = false,
+	flagAcionamentoPercentimetro = false,
+	flagAcionamentoBombaPrincipal = false,
+	flagAcionamentoContatoAuxiliar = false,
+
+	flagLeituraGNSS = false,
+	flagLeituraGNSSRecente = false,
+	flagPosicaoInicioOperacaoConfiavel = false,
+	flagPacoteRS485 = false,
+	flagPacoteGNSSRS485 = false,
+	flagPacoteGNSSLoRa = false,
+	flagSucessoLoRa = false,
+
+	flagWiFiDhcp = true,
+
+	flagSalvaOperacao = false,
+
+	flagInfoLCDSeguranca = false,
+	flagInfoLCDPressao = false,
+	flagInfoLCDGNSS = false,
+
+	flagFimCursoDireita = false,
+	flagFimCursoEsquerda = false;
+
+uint8_t
+	modoOperacao = MODO_DESLOCAMENTO,
+	modoOperacaoRemoto = MODO_DESLOCAMENTO,
+	modoOperacaoHorarioPonta = MODO_DESLOCAMENTO,
+	cicloIrrigacao = IRRIGACAO_1_CICLO,
+	sentidoMotor = MOTOR_DESLIGADO,
+	sentidoRemoto = REMOTO_SEM_COMANDO,
+	sentidoHorarioPonta = MOTOR_DESLIGADO,
+	agendaHorarioAcionado = 99,
+	alarmePressao = 0,
+	histereseAlarmePressao = 0,
+	tipoSensorPressao = SENSOR_10BAR,
+	tempoPressurizacao = 5,
+	placaSoquete = SOQUETE_GPRS,
+
+	contadorVerificaSeguranca = TEMPO_VERIFICA_SEGURANCA,
+	contadorReversaoMotor = TEMPO_REVERSAO_MOTOR,
+	contadorPulsoReleOn = TEMPO_PULSO_RELE_ON,
+	contadorErroBG95 = 0,
+	contadorErroGPRS = 0,
+	contadorErroGNSS = 0,
+	contadorTimeoutGNSS = 0,
+	contadorTimeoutGNSSRecente = 0,
+	contadorTimeoutConfiguraGNSS = 0,
+	contadorTimeoutWiFi = 0,
+	contadorTimeoutDadosWiFi = 0,
+	comunicacaoGNSS = GNSS_485,
+	contadorIniciaVerificacaoHorarioPonta = 0,
+	contadorRS485Buffer = 0,
+	contadorLoRaBuffer = 0,
+	contadorAguardaPosicaoObstaculo = 0,
+	pressao = 0,
+
+	timeoutRS485 = TIMEOUT_PADRAO_RS485,
+
+	contadorEntraMenu = 0,
+	contadorReporteService = 0,
+
+	percentualSinalOperadora = 0, //entre 0-99%
+	qualidadeSinalLora = 0, //entre 0-5
+
+	canalLoRa = 0x1F,
+	canalLoRaGateway = 0x10;
+
+char
+	soqueteDataIn = ' ',
+	rs485DataIn = ' ',
+	loraDataIn = ' ',
+
+	operadoraConectada = 'N';
+
+uint16_t
+	senha = 0,
+	tempoPressurizacaoSegundos = 0,
+	contadorSoqueteBuffer = 0,
+	contadorTimeoutBG95 = 0,
+	contadorTimeoutGPRS = 0,
+	contadorTimeoutLoRa = 0,
+	contadorTimeoutLoRaGateway = 0,
+	contadorBombaPrincipal = 0,
+
+	tempoBaseLaminaDagua = 200,
+	tabelaLaminaDagua05 = 7000,
+	tabelaLaminaDagua12 = 5000,
+	tabelaLaminaDagua20 = 4000,
+	tabelaLaminaDagua30 = 3000,
+	tabelaLaminaDagua40 = 2000,
+	tabelaLaminaDagua50 = 1200,
+	tabelaLaminaDagua70 = 500,
+
+	laminaDagua = 100,
+	trocaLaminaDagua = 100,
+	contadorLaminaDagua = 0,
+	contadorLaminaDaguaDesligado = 0,
+	setPointContadorLaminaDagua = 0,
+	setPointContadorLaminaDaguaDesligado = 0,
+
+	enderecoLoRaPivot = 0x0110,
+	enderecoLoRaGNSS = 0x0111,
+
+	enderecoLoRaPivotGateway = 0x0110,
+	enderecoLoRaGateway = 0x0112,
+
+	contadorTempoInfoSinais = 0,
+
+	posicaoMemoriaLog = 0;
+
+uint32_t
+	numeroSerial = 0,
+
+	ultimoIdConfig = 0,
+	ultimoIdAcionamento = 0;
+
+CoordenadasTypeDef
+	posicaoAtualGPS,
+	posicaoInicioOperacao,
+	posicaoHome;
+
+HorimetroTypeDef
+	horimetro;
+
+LogTypeDef
+	logLido;
+
+char
+	mensagemFTPLCD[16],
+
+	bufferEnvioLoRa[TAMANHO_BUFFER_LORA],
+	bufferLoRa[TAMANHO_BUFFER_LORA],
+	bufferRS485[TAMANHO_BUFFER_RS485],
+	bufferSoquete[TAMANHO_BUFFER_SOQUETE],
+	bufferEnvioSoquete[TAMANHO_BUFFER_SOQUETE],
+	reporteService[TAMANHO_MAXIMO_REPORTE],
+
+	enderecoLoRaRecebidoPivot[5],
+	enderecoLoRaRecebidoGNSS[5],
+	canalLoRaRecebido[5],
+
+	wifiSSID[QUANTIDADE_CHAR_WIFI_SSID + 1],
+	wifiSenha[QUANTIDADE_CHAR_WIFI_SENHA + 1],
+
+	gprsAPN[QUANTIDADE_CHAR_GPRS_APN];
+
+uint8_t
+	flagObstaculoAtivado[QUANTIDADE_OBSTACULOS],
+	statusEntradasDigitais[QUANTIDADE_ENTRADAS_DIGITAIS],
+	statusReles[QUANTIDADE_RELES];
+
+uint8_t
+	acionamentoAgenda[QUANTIDADE_AGENDA_ACIONAMENTO],
+	diaDaSemanaAgenda[QUANTIDADE_AGENDA_ACIONAMENTO],
+
+	wifiIpDinamico[4],
+	wifiIp[4],
+	wifiGateway[4],
+	wifiDNS[4],
+	wifiMask[4];
+
+uint16_t
+	valorAdc[2],
+	raioAtuacaoObstaculo[QUANTIDADE_OBSTACULOS];
+
+RTC_TimeTypeDef
+	horarioLigarAgenda[QUANTIDADE_AGENDA_ACIONAMENTO],
+	horarioDesligarAgenda[QUANTIDADE_AGENDA_ACIONAMENTO];
+
+CoordenadasTypeDef
+	posicoesObstaculos[QUANTIDADE_OBSTACULOS];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -78,12 +307,98 @@ static void MX_USART6_UART_Init(void);
 static void MX_UART8_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_USART3_UART_Init(void);
+static void MX_IWDG_Init(void);
+void MainTask(void const * argument);
+void FTPTask(void const * argument);
+
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
+	if(hadc == &hadc1) {
+		leituraTransdutorPressao();
+	}
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+	if(huart-> Instance==UART8) { // LORA
+		bufferLoRa[contadorLoRaBuffer] = loraDataIn;
+		contadorLoRaBuffer ++;
+
+		if(contadorLoRaBuffer >= TAMANHO_BUFFER_LORA) {
+			apagaLoRaBuffer();
+		}
+
+		//HAL_UART_Transmit(&huart1, &loraDataIn, 1, 20);
+
+		if(loraDataIn == 0x0A) {
+			flagPacoteGNSSLoRa = true;
+		}
+	}
+
+
+	if(huart-> Instance==USART6) { // PLACA SOQUETE
+		if(soqueteDataIn == 0x00) {
+			return;
+		}
+		if(placaSoquete == SOQUETE_WIFI) {
+			return;
+		}
+		if(placaSoquete == SOQUETE_GPRS) {
+			HAL_UART_Transmit(&huart3, &soqueteDataIn, 1, 20);
+		}
+		bufferSoquete[contadorSoqueteBuffer] = soqueteDataIn;
+		contadorSoqueteBuffer ++;
+
+		if(contadorSoqueteBuffer >= TAMANHO_BUFFER_SOQUETE) {
+			apagaSoqueteBuffer();
+		}
+	}
+
+	if(huart-> Instance==UART4) { //WIFI
+		if(soqueteDataIn == 0x00) {
+			return;
+		}
+		if(placaSoquete != SOQUETE_WIFI) {
+			return;
+		}
+		bufferSoquete[contadorSoqueteBuffer] = soqueteDataIn;
+		contadorSoqueteBuffer ++;
+
+		if(contadorSoqueteBuffer >= TAMANHO_BUFFER_SOQUETE) {
+			apagaSoqueteBuffer();
+		}
+	}
+
+	if(huart-> Instance==USART1) { //rs485
+		if(rs485DataIn == 0x00) {
+			return;
+		}
+		bufferRS485[contadorRS485Buffer] = rs485DataIn;
+		contadorRS485Buffer ++;
+
+		if(contadorRS485Buffer >= TAMANHO_BUFFER_RS485) {
+			apagaRS485Buffer();
+		}
+
+		if(rs485DataIn == 0x0A) {
+			flagPacoteRS485 = true;
+		}
+	}
+}
+
+void delayMicro(uint32_t tempo) {
+	__HAL_TIM_SET_COUNTER(&htim2, 0);
+	while(__HAL_TIM_GET_COUNTER(&htim2) < tempo) {
+	}
+}
+
+void reiniciaWatchDog() {
+	HAL_IWDG_Refresh(&hiwdg);
+}
 
 /* USER CODE END 0 */
 
@@ -127,9 +442,89 @@ int main(void)
   MX_UART8_Init();
   MX_I2C1_Init();
   MX_USART3_UART_Init();
+  MX_IWDG_Init();
   /* USER CODE BEGIN 2 */
+  HAL_TIM_Base_Start(&htim2); //Timer do delay us
+  HAL_TIM_Base_Start_IT(&htim3); //Timer do Scheduller
+  HAL_ADC_Start_DMA(&hadc1, valorAdc, 2); //Inicia o ADC1 pela DMA
+  desligaTodasSaidas();
+
+  on(SOQUETE_OUT2_GPIO_Port, SOQUETE_OUT2_Pin); //O Out1 muda conforme a placa soquete
+
+  on(LED_COM_GPIO_Port, LED_COM_Pin);
+  on(LED_CPU_GPIO_Port, LED_CPU_Pin);
+  on(LCD_BKL_GPIO_Port, LCD_BKL_Pin);
+
+  off(LORA_M0_GPIO_Port, LORA_M0_Pin);
+  off(LORA_M1_GPIO_Port, LORA_M1_Pin);
+
+  readRTC();
+  inicializaLcd();
+  telaInicial();
+  off(SOQUETE_OUT2_GPIO_Port, SOQUETE_OUT2_Pin);
+
+  horimetro.segundos = 0;
+  reiniciaVeriaveisProcesso();
+
+  verificaEeprom();
+  readPosicaoMemoriaLog();
+  salvaLog(LOG_SISTEMA_INICIADO);
+  readEeprom();
+  calculaLaminaDagua();
+  configuraVelocidadeUART6();
+
+  on(IOT_PON_TRIG_GPIO_Port, IOT_PON_TRIG_Pin);
+  HAL_Delay(100);
+  off(IOT_PON_TRIG_GPIO_Port, IOT_PON_TRIG_Pin);
+
+  HAL_UART_Transmit(&huart3, "Inicializado\n", 13, 100);
+  HAL_UART_Receive_DMA(&huart8, &loraDataIn, 1);
+  if(placaSoquete == SOQUETE_WIFI) {
+	  HAL_UART_Receive_DMA(&huart4, &soqueteDataIn, 1);
+  }
+  else {
+	  HAL_UART_Receive_DMA(&huart6, &soqueteDataIn, 1);
+  }
+
+  HAL_UART_Receive_DMA(&huart1, &rs485DataIn, 1);
+
+  telaOperacao();
 
   /* USER CODE END 2 */
+
+  /* USER CODE BEGIN RTOS_MUTEX */
+  /* add mutexes, ... */
+  /* USER CODE END RTOS_MUTEX */
+
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* add semaphores, ... */
+  /* USER CODE END RTOS_SEMAPHORES */
+
+  /* USER CODE BEGIN RTOS_TIMERS */
+  /* start timers, add new ones, ... */
+  /* USER CODE END RTOS_TIMERS */
+
+  /* USER CODE BEGIN RTOS_QUEUES */
+  /* add queues, ... */
+  /* USER CODE END RTOS_QUEUES */
+
+  /* Create the thread(s) */
+  /* definition and creation of mainTask */
+  osThreadDef(mainTask, MainTask, osPriorityNormal, 0, 512);
+  mainTaskHandle = osThreadCreate(osThread(mainTask), NULL);
+
+  /* definition and creation of ftpTask */
+  osThreadDef(ftpTask, FTPTask, osPriorityIdle, 0, 1024);
+  ftpTaskHandle = osThreadCreate(osThread(ftpTask), NULL);
+
+  /* USER CODE BEGIN RTOS_THREADS */
+  /* add threads, ... */
+  /* USER CODE END RTOS_THREADS */
+
+  /* Start scheduler */
+  osKernelStart();
+
+  /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -159,10 +554,12 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSI
+                              |RCC_OSCILLATORTYPE_LSE;
   RCC_OscInitStruct.LSEState = RCC_LSE_ON;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = 8;
@@ -226,7 +623,7 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc1.Init.NbrOfConversion = 1;
-  hadc1.Init.DMAContinuousRequests = DISABLE;
+  hadc1.Init.DMAContinuousRequests = ENABLE;
   hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
   {
@@ -297,6 +694,34 @@ static void MX_I2C1_Init(void)
 }
 
 /**
+  * @brief IWDG Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_IWDG_Init(void)
+{
+
+  /* USER CODE BEGIN IWDG_Init 0 */
+
+  /* USER CODE END IWDG_Init 0 */
+
+  /* USER CODE BEGIN IWDG_Init 1 */
+
+  /* USER CODE END IWDG_Init 1 */
+  hiwdg.Instance = IWDG;
+  hiwdg.Init.Prescaler = IWDG_PRESCALER_64;
+  hiwdg.Init.Reload = 4095;
+  if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN IWDG_Init 2 */
+
+  /* USER CODE END IWDG_Init 2 */
+
+}
+
+/**
   * @brief RTC Initialization Function
   * @param None
   * @retval None
@@ -330,7 +755,7 @@ static void MX_RTC_Init(void)
   }
 
   /* USER CODE BEGIN Check_RTC_BKUP */
-
+  return; //não permite reiniciar a data/hora
   /* USER CODE END Check_RTC_BKUP */
 
   /** Initialize RTC and set the Time and Date
@@ -626,19 +1051,19 @@ static void MX_DMA_Init(void)
 
   /* DMA interrupt init */
   /* DMA1_Stream2_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Stream2_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(DMA1_Stream2_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream2_IRQn);
   /* DMA1_Stream6_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream6_IRQn);
   /* DMA2_Stream0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
   /* DMA2_Stream1_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA2_Stream1_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(DMA2_Stream1_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
   /* DMA2_Stream2_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA2_Stream2_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(DMA2_Stream2_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
 
 }
@@ -719,8 +1144,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : IN3_Pin IN4_Pin IN5_Pin IN6_Pin */
-  GPIO_InitStruct.Pin = IN3_Pin|IN4_Pin|IN5_Pin|IN6_Pin;
+  /*Configure GPIO pins : IN6_Pin IN5_Pin IN4_Pin IN3_Pin */
+  GPIO_InitStruct.Pin = IN6_Pin|IN5_Pin|IN4_Pin|IN3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
@@ -753,6 +1178,44 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE END 4 */
 
+/* USER CODE BEGIN Header_MainTask */
+/**
+  * @brief  Function implementing the mainTask thread.
+  * @param  argument: Not used
+  * @retval None
+  */
+/* USER CODE END Header_MainTask */
+void MainTask(void const * argument)
+{
+  /* USER CODE BEGIN 5 */
+  /* Infinite loop */
+  for(;;)
+  {
+	  mainTask();
+	  osDelay(1);
+  }
+  /* USER CODE END 5 */
+}
+
+/* USER CODE BEGIN Header_FTPTask */
+/**
+* @brief Function implementing the ftpTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_FTPTask */
+void FTPTask(void const * argument)
+{
+  /* USER CODE BEGIN FTPTask */
+  /* Infinite loop */
+  for(;;)
+  {
+	  serviceTask();
+	  osDelay(1);
+  }
+  /* USER CODE END FTPTask */
+}
+
 /**
   * @brief  Period elapsed callback in non blocking mode
   * @note   This function is called  when TIM1 interrupt took place, inside
@@ -771,6 +1234,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
+
+  if(htim == &htim3) {
+  	  schedulerEngine();
+  }
 
   /* USER CODE END Callback 1 */
 }
