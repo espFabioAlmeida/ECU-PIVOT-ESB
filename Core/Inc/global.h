@@ -8,7 +8,7 @@
 #ifndef INC_GLOBAL_H_
 #define INC_GLOBAL_H_
 
-#define VERSAO_FIRMWARE 1
+#define VERSAO_FIRMWARE 2
 #define SUBVERSAO_FIRMWARE 0
 
 enum BOOL {
@@ -21,8 +21,8 @@ enum BOOL {
 #define SENHA_MESTRE 1120
 
 extern const char SERVICE_TOKEN[160];
-extern const char SERVICE_ADDRESS[45];
-extern const char SERVICE_HOST[32];
+extern const char SERVICE_ADDRESS[65];
+extern const char SERVICE_HOST[55];
 extern const char ENDPOINT_POST_REPORTE[25];
 extern const char ENDPOINT_GET_ACIONAMENTO[25];
 extern const char ENDPOINT_GET_CONFIG[25];
