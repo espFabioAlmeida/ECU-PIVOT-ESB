@@ -1088,6 +1088,7 @@ void leituraAcionamentoService() {
 		HAL_UART_Transmit(&huart1, &reporteService, strlen(reporteService), 500);
 		apagaSoqueteBuffer();
 		writeEepromFertiIrrigacao();
+		writeEepromBombaBooster();
 	}
 
 	limpaReporteService();

@@ -62,7 +62,7 @@ void recebePosicaoGNSS(signed int offset, char buffer[]) {
 	}
 
 	//Mock fora do obstaculo
-	/*
+
 	posicaoRecebida.latitudeGraus = 26;
 	posicaoRecebida.latitudeMinutos = 52;
 	posicaoRecebida.latitudeSegundos = 49429;
@@ -71,7 +71,7 @@ void recebePosicaoGNSS(signed int offset, char buffer[]) {
 	posicaoRecebida.longitudeMinutos = 4;
 	posicaoRecebida.longitudeSegundos = 30907;
 	posicaoRecebida.indicadorWE = 'W';
-	 */
+
 
 	//Mock dentro do obstaculo
 	/*

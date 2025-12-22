@@ -255,7 +255,6 @@ extern uint8_t
 	contadorTimeoutGNSS,
 	contadorTimeoutGNSSRecente,
 	contadorTimeoutConfiguraGNSS,
-	contadorTimeoutWiFi,
 	contadorTimeoutDadosWiFi,
 	comunicacaoGNSS,
 	contadorIniciaVerificacaoHorarioPonta,
@@ -290,6 +289,7 @@ extern uint16_t
 	contadorTimeoutGPRS,
 	contadorTimeoutLoRa,
 	contadorTimeoutLoRaGateway,
+	contadorTimeoutWiFi,
 	contadorBombaPrincipal,
 
 	contadorTempoInfoSinais,

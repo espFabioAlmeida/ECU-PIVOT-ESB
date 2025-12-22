@@ -167,7 +167,6 @@ uint8_t
 	contadorTimeoutGNSS = 0,
 	contadorTimeoutGNSSRecente = 0,
 	contadorTimeoutConfiguraGNSS = 0,
-	contadorTimeoutWiFi = 0,
 	contadorTimeoutDadosWiFi = 0,
 	comunicacaoGNSS = GNSS_485,
 	contadorIniciaVerificacaoHorarioPonta = 0,
@@ -202,6 +201,7 @@ uint16_t
 	contadorTimeoutGPRS = 0,
 	contadorTimeoutLoRa = 0,
 	contadorTimeoutLoRaGateway = 0,
+	contadorTimeoutWiFi = 0,
 	contadorBombaPrincipal = 0,
 
 	tempoBaseLaminaDagua = 200,
