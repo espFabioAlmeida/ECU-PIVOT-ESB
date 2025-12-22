@@ -246,6 +246,14 @@ void leituraConfigGPRS() {
 	escreveStringService("Verf. Config 30%");
 
 	limpaBufferEnvioSoquete();
+	strcat(bufferEnvioSoquete, "AT+HTTPPARA=\"USERDATA\",\""); //Configura Token
+	strcat(bufferEnvioSoquete, SERVICE_TOKEN);
+	strcat(bufferEnvioSoquete, "\"\r\n");
+	HAL_UART_Transmit(&huart3, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 800);
+	aguardaGPRS(TIMEOUT_GPRS, false);
+	escreveStringService("Reportando 35%");
+
+	limpaBufferEnvioSoquete();
 	strcat(bufferEnvioSoquete, "AT+HTTPPARA=\"CONTENT\",\"application/json\"\r\n"); //Configura tipo de arquivo
 	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 500);
 	aguardaGPRS(TIMEOUT_GPRS, false);
@@ -297,6 +305,14 @@ void leituraAcionamentoGPRS() {
 	HAL_UART_Transmit(&huart6, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 500);
 	aguardaGPRS(TIMEOUT_GPRS, false);
 	escreveStringService("Verf. Acion. 30%");
+
+	limpaBufferEnvioSoquete();
+	strcat(bufferEnvioSoquete, "AT+HTTPPARA=\"USERDATA\",\""); //Configura Token
+	strcat(bufferEnvioSoquete, SERVICE_TOKEN);
+	strcat(bufferEnvioSoquete, "\"\r\n");
+	HAL_UART_Transmit(&huart3, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 800);
+	aguardaGPRS(TIMEOUT_GPRS, false);
+	escreveStringService("Reportando 35%");
 
 	limpaBufferEnvioSoquete();
 	strcat(bufferEnvioSoquete, "AT+HTTPPARA=\"CONTENT\",\"application/json\"\r\n"); //Configura tipo de arquivo
