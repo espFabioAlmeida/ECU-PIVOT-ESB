@@ -144,6 +144,8 @@ void leituraTrocaModoOperacao() {
 			flagInfoLCDPressao = false;
 			flagInfoLCDSeguranca = false;
 			flagInfoLCDGNSS = false;
+			flagOverrideBombaBooster = false;
+			writeEepromBombaBooster();
 			reiniciaVeriaveisProcesso();
 		}
 	}

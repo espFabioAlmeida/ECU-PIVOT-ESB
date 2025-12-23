@@ -61,8 +61,8 @@ void recebePosicaoGNSS(signed int offset, char buffer[]) {
 		flagBarricadaGPS = false;
 	}
 
-	//Debug
-	/*
+	//Mock fora do obstaculo
+/*
 	posicaoRecebida.latitudeGraus = 26;
 	posicaoRecebida.latitudeMinutos = 52;
 	posicaoRecebida.latitudeSegundos = 49429;
@@ -71,11 +71,29 @@ void recebePosicaoGNSS(signed int offset, char buffer[]) {
 	posicaoRecebida.longitudeMinutos = 4;
 	posicaoRecebida.longitudeSegundos = 30907;
 	posicaoRecebida.indicadorWE = 'W';
-	*/
+*/
+
+	//Mock dentro do obstaculo
+/*
+	posicaoRecebida.latitudeGraus = 26;
+	posicaoRecebida.latitudeMinutos = 52;
+	posicaoRecebida.latitudeSegundos = 46579;
+	posicaoRecebida.hemisferio = 'S';
+	posicaoRecebida.longitudeGraus = 49;
+	posicaoRecebida.longitudeMinutos = 4;
+	posicaoRecebida.longitudeSegundos = 28622;
+	posicaoRecebida.indicadorWE = 'W';
+*/
 
 	if(!posicaoRecebida.latitudeGraus && !posicaoRecebida.latitudeMinutos && !posicaoRecebida.latitudeSegundos &&
 			!posicaoRecebida.longitudeGraus && !posicaoRecebida.longitudeMinutos && !posicaoRecebida.longitudeSegundos) {
 		//Ignora posição zerada, matém última válida
+		return;
+	}
+
+	if(posicaoRecebida.latitudeGraus > 89 || posicaoRecebida.latitudeMinutos > 59 || posicaoRecebida.latitudeSegundos > 59999 ||
+			posicaoRecebida.longitudeGraus > 179 || posicaoRecebida.longitudeMinutos > 59 || posicaoRecebida.longitudeSegundos > 59999) {
+		//Caso venha um dado incorreto
 		return;
 	}
 

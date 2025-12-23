@@ -10,7 +10,7 @@
 /*==============================================================================
 CONSTANTES DO ARQUIVO
 ==============================================================================*/
-#define TEMPO_PADRAO_DADOS 10
+#define TEMPO_PADRAO_DADOS 15
 /*==============================================================================
 AGUARDA WIFI
 ==============================================================================*/
@@ -20,10 +20,12 @@ uint8_t aguardaWiFi(uint16_t tempo, uint8_t isRequest) {
 	//apagaSoqueteBuffer();
 
 	if(isRequest) {
-		while(contadorTimeoutWiFi) {
+		while(contadorTimeoutWiFi || contadorTimeoutDadosWiFi) {
 			if(soqueteDataIn == '}') {
 				contadorTimeoutWiFi = 0;
-				contadorTimeoutDadosWiFi = 1;
+				if(!contadorTimeoutDadosWiFi) {
+					contadorTimeoutDadosWiFi = 1;
+				}
 			}
 
 			if(contadorTimeoutDadosWiFi >= TEMPO_PADRAO_DADOS) {
@@ -44,6 +46,9 @@ uint8_t aguardaWiFi(uint16_t tempo, uint8_t isRequest) {
 
 	if(contadorSoqueteBuffer) {
 		HAL_UART_Transmit(&huart3, &bufferSoquete, strlen(bufferSoquete), 500);
+		if(!isRequest) {
+			apagaSoqueteBuffer();
+		}
 		if(indexOf(bufferSoquete, "200 OK") >= 0) {
 			HAL_UART_Transmit(&huart3, "RECEBIDO 200\n", 13, 100);
 			return true;
@@ -109,8 +114,8 @@ uint8_t reporteWiFi() {
 	}
 	escreveStringService("Reporte 90%");
 
-	//HAL_UART_Transmit(&huart4, "AT+CIPCLOSE\r\n", 13, 500);
-	//aguardaWiFi(50);
+	HAL_UART_Transmit(&huart4, "AT+CIPCLOSE\r\n", 13, 500);
+	aguardaWiFi(50, false);
 	escreveStringService("Reporte 99%");
 
 	HAL_UART_Transmit(&huart4, "+++", 3, 200);
@@ -139,13 +144,13 @@ uint8_t leituraConfigWiFi() {
 	strcat(request, "\r\n");
 	strcat(request, "\r\n");
 
-	/*limpaBufferEnvioSoquete();
+	limpaBufferEnvioSoquete();
 	strcat(bufferEnvioSoquete, "AT+CIPSTART=\"TCP\",\"");
 	strcat(bufferEnvioSoquete, SERVICE_HOST);
 	strcat(bufferEnvioSoquete, "\"\,80\r\n");
 	HAL_UART_Transmit(&huart4, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 500);
 	aguardaWiFi(100, false);
-	escreveStringService("Config 40%");*/
+	escreveStringService("Config 40%");
 
 	limpaBufferEnvioSoquete();
 	strcat(bufferEnvioSoquete, "AT+CIPSEND=");
@@ -156,15 +161,15 @@ uint8_t leituraConfigWiFi() {
 	escreveStringService("Config 50%");
 
 	HAL_UART_Transmit(&huart4, request, strlen(request), 1000);
-	if(aguardaWiFi(100, true)) {
+	if(aguardaWiFi(300, true)) {
 		sucesso = true;
 		leituraConfiguracaoService();
 		apagaSoqueteBuffer();
 	}
 	escreveStringService("Config 90%");
 
-	//HAL_UART_Transmit(&huart4, "AT+CIPCLOSE\r\n", 13, 500);
-	//aguardaWiFi(50);
+	HAL_UART_Transmit(&huart4, "AT+CIPCLOSE\r\n", 13, 500);
+	aguardaWiFi(50, false);
 	escreveStringService("Config 99%");
 
 	HAL_UART_Transmit(&huart4, "+++", 3, 200);
@@ -193,13 +198,13 @@ uint8_t leituraAcionamentoWiFi() {
 	strcat(request, "\r\n");
 	strcat(request, "\r\n");
 
-	/*limpaBufferEnvioSoquete(
+	limpaBufferEnvioSoquete();
 	strcat(bufferEnvioSoquete, "AT+CIPSTART=\"TCP\",\"");
 	strcat(bufferEnvioSoquete, SERVICE_HOST);
 	strcat(bufferEnvioSoquete, "\"\,80\r\n");
 	HAL_UART_Transmit(&huart4, &bufferEnvioSoquete, strlen(bufferEnvioSoquete), 500);
 	aguardaWiFi(100, false);
-	escreveStringService("Acionamento 40%");*/
+	escreveStringService("Acionamento 40%");
 
 	limpaBufferEnvioSoquete();
 	strcat(bufferEnvioSoquete, "AT+CIPSEND=");
@@ -210,7 +215,7 @@ uint8_t leituraAcionamentoWiFi() {
 	escreveStringService("Acionamento 50%");
 
 	HAL_UART_Transmit(&huart4, request, strlen(request), 1000);
-	if(aguardaWiFi(100, true)) {
+	if(aguardaWiFi(300, true)) {
 		sucesso = true;
 		leituraAcionamentoService();
 		apagaSoqueteBuffer();

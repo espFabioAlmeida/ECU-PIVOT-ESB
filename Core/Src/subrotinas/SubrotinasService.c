@@ -340,7 +340,7 @@ uint8_t validaPacoteService() {
 		}
 	}
 
-	ponteiro = indexOf(bufferSoquete, "{");
+	ponteiro = lastIndexOf(bufferSoquete, "{");
 
 	if(ponteiro < 0) {
 		return false;
@@ -348,7 +348,7 @@ uint8_t validaPacoteService() {
 
 	inicioPacote = ponteiro;
 
-	ponteiro = indexOf(bufferSoquete, "}");
+	ponteiro = lastIndexOf(bufferSoquete, "}");
 
 	if(ponteiro < 0) {
 		return false;
@@ -910,7 +910,7 @@ void leituraConfiguracaoService() {
 	sprintfReporteService(tempoBaseLaminaDagua, 0);
 	strcat(reporteService, "\n");
 
-	HAL_UART_Transmit(&huart1, &reporteService, strlen(reporteService), 500);
+	HAL_UART_Transmit(&huart3, &reporteService, strlen(reporteService), 500);
 	apagaSoqueteBuffer();
 
 	ultimoIdConfig = idRecebido;
@@ -1055,6 +1055,7 @@ void leituraAcionamentoService() {
 			flagSelecaoPivot = true;
 		}
 
+		limpaReporteService();
 		strcat(reporteService, "Operacao: ");
 		sprintfReporteService(modoOperacaoRemoto, 0);
 		strcat(reporteService, "\r\n");
@@ -1085,9 +1086,10 @@ void leituraAcionamentoService() {
 		sprintfReporteService(flagOverrideBombaBooster, 0);
 		strcat(reporteService, "\r\n");
 
-		HAL_UART_Transmit(&huart1, &reporteService, strlen(reporteService), 500);
+		HAL_UART_Transmit(&huart3, &reporteService, strlen(reporteService), 500);
 		apagaSoqueteBuffer();
 		writeEepromFertiIrrigacao();
+		writeEepromBombaBooster();
 	}
 
 	limpaReporteService();

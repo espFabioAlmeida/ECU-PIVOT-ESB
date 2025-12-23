@@ -278,14 +278,12 @@ void operacaoIrrigacao() {
 		}
 	}
 
-	/*if(!flagLeituraGNSSRecente || flagObstaculoEncontrado) {
+	if(!flagLeituraGNSSRecente || flagObstaculoEncontrado) {
 		flagBombaBooster = false;
 	}
 	else {
 		flagBombaBooster = true;
-	}*/
-
-	flagBombaBooster = true; //por hora os obstáculos não são utilizados, não tem o porquê de aguardar gps para acionar a bomba booster
+	}
 
 	if(!contadorLaminaDagua) {
 		if(flagTrocouLaminaDagua) {
