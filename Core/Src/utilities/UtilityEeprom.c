@@ -454,6 +454,12 @@ void writeEepromDadosHorarioPonta() {
 	writeExternalEeprom(0, 367, flagSaiuHorarioPonta);
 }
 /*==============================================================================
+WRITE EEPROM - ACIONAMENTO BOMBA BOOSTER
+==============================================================================*/
+void writeEepromBombaBooster() {
+	writeExternalEeprom(0, 368, flagOverrideBombaBooster);
+}
+/*==============================================================================
 WRITE ALL EEPROM
 ==============================================================================*/
 void writeAllEeprom() {
@@ -488,6 +494,7 @@ void writeAllEeprom() {
 	writeEepromEnderecoLoRaGateway();
 	writeEepromCanalLoRaGatway();
 	writeEepromDadosHorarioPonta();
+	writeEepromBombaBooster();
 }
 /*==============================================================================
 READ EEPROM
@@ -679,6 +686,7 @@ void readEeprom() {
 		sentidoHorarioPonta = readExternalEeprom(0, 365);
 		flagRetornoHomeHorarioPonta = readExternalEeprom(0, 366);
 		flagSaiuHorarioPonta = readExternalEeprom(0, 367);
+		flagOverrideBombaBooster = readExternalEeprom(0, 368);
 	}
 }
 /*==============================================================================
@@ -699,6 +707,7 @@ void apagaEeprom() {
 		agendaHorarioAcionado = 99;
 		flagRetornoHome = false;
 		flagFertiIrrigacao = false;
+		flagOverrideBombaBooster = false;
 		numeroSerial = 0;
 		tempoBaseLaminaDagua = 200;
 		tabelaLaminaDagua05 = 500;

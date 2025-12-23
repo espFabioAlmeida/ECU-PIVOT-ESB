@@ -30,10 +30,10 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 const char SERVICE_TOKEN[160] = "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MjY3ODc2ODAsImV4cCI6NDg4MjU0NzY4MH0.HAkiJpJuatu9opYnIijl3HBSTZjp9GCYPEYsGmvLF14";
-const char SERVICE_ADDRESS[45] = "http://pivots-907b8.rj.r.appspot.com/";
-//const char SERVICE_ADDRESS[45] = "https://api-app-pivots.onrender.com/";
-const char SERVICE_HOST[32] = "pivots-907b8.rj.r.appspot.com";
-//const char SERVICE_HOST[32] = "api-app-pivots.onrender.com";
+const char SERVICE_ADDRESS[65] = "http://pivots-proxy-reverse.automasensorapps.workers.dev/";
+//const char SERVICE_ADDRESS[45] = "http://pivots-907b8.rj.r.appspot.com/";
+const char SERVICE_HOST[55] = "pivots-proxy-reverse.automasensorapps.workers.dev";
+//const char SERVICE_HOST[32] = "pivots-907b8.rj.r.appspot.com";
 const char ENDPOINT_POST_REPORTE[25] = "api/pivots/report";
 const char ENDPOINT_GET_ACIONAMENTO[25] = "api/pivots/drive/";
 const char ENDPOINT_GET_CONFIG[25] = "api/pivots/config/";
@@ -167,7 +167,6 @@ uint8_t
 	contadorTimeoutGNSS = 0,
 	contadorTimeoutGNSSRecente = 0,
 	contadorTimeoutConfiguraGNSS = 0,
-	contadorTimeoutWiFi = 0,
 	contadorTimeoutDadosWiFi = 0,
 	comunicacaoGNSS = GNSS_485,
 	contadorIniciaVerificacaoHorarioPonta = 0,
@@ -202,6 +201,7 @@ uint16_t
 	contadorTimeoutGPRS = 0,
 	contadorTimeoutLoRa = 0,
 	contadorTimeoutLoRaGateway = 0,
+	contadorTimeoutWiFi = 0,
 	contadorBombaPrincipal = 0,
 
 	tempoBaseLaminaDagua = 200,

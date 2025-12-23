@@ -8,8 +8,8 @@
 #ifndef INC_GLOBAL_H_
 #define INC_GLOBAL_H_
 
-#define VERSAO_FIRMWARE 1
-#define SUBVERSAO_FIRMWARE 0
+#define VERSAO_FIRMWARE 2
+#define SUBVERSAO_FIRMWARE 1
 
 enum BOOL {
 	false,
@@ -21,8 +21,8 @@ enum BOOL {
 #define SENHA_MESTRE 1120
 
 extern const char SERVICE_TOKEN[160];
-extern const char SERVICE_ADDRESS[45];
-extern const char SERVICE_HOST[32];
+extern const char SERVICE_ADDRESS[65];
+extern const char SERVICE_HOST[55];
 extern const char ENDPOINT_POST_REPORTE[25];
 extern const char ENDPOINT_GET_ACIONAMENTO[25];
 extern const char ENDPOINT_GET_CONFIG[25];
@@ -255,7 +255,6 @@ extern uint8_t
 	contadorTimeoutGNSS,
 	contadorTimeoutGNSSRecente,
 	contadorTimeoutConfiguraGNSS,
-	contadorTimeoutWiFi,
 	contadorTimeoutDadosWiFi,
 	comunicacaoGNSS,
 	contadorIniciaVerificacaoHorarioPonta,
@@ -290,6 +289,7 @@ extern uint16_t
 	contadorTimeoutGPRS,
 	contadorTimeoutLoRa,
 	contadorTimeoutLoRaGateway,
+	contadorTimeoutWiFi,
 	contadorBombaPrincipal,
 
 	contadorTempoInfoSinais,

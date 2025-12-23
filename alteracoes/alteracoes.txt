@@ -1,0 +1,16 @@
+São necessárias 3 alterações para o funcionamento correto da placa.
+
+1. Alteração da RS485, por erro no esquemático da placa (foto 1):
+a) Cortar a trilha nos dois pontos indicados em vermelho. O pad no meio deve ficar completamente sem conexão com as trilhas em volta.
+b) Fazer um jumper entre o pino 1 do U10 e o pino 1 do U8 EM VERDE.
+c) Fazer um jumper entre o pad isolado e o pino da esquerda do C14 (o pino mais próximo do U5) EM VERDE.
+
+2. Remover o U4 e fechar com solda os pinos 1 e 2 (+5V com saída), cuidado para não juntar o o pino 3 (GND).
+
+3. A terceira modificação é somente necessária se a placa soquete for GPRS. Caso for 4G não realizar e caso for WiFi não é necessário. 
+Inicialmente deve-se remover o CI U5. Há duas formas de se fazer a modificação.
+
+A primeira: Fazer um jumper entre o pinos 3 e 18 do U5 e um outro jumper entre os pinos 4 e 17, em ambos os casos é o pino contrário. Na foto 2 é possível observar.
+
+A segunda: Soldar dois resistores de 1R conforme a foto 3 (lado dos componentes). Observe que em um dos resistores, um dos terminais vai soldado diretamente na trilha (necessário remover a máscara para soldar).
+Na foto 4 montar o resistor de 1R conforme a foto.
